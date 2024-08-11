@@ -2,7 +2,7 @@ from cli.arg_parser import parse_arguments
 import pandas as pd
 import numpy as np
 
-def hapmap_to_vcf(input_file1, output_file1, output_file2):
+def hapmap_to_plink(input_file1, output_file1, output_file2):
 
     hmp_file = input_file1
 

@@ -2,7 +2,7 @@ from cli.arg_parser import parse_arguments
 import pandas as pd
 import numpy as np
 
-def vcf_to_hmp(input_file1, output_file1, output_file2):
+def vcf_to_plink(input_file1, output_file1, output_file2):
     vcf_file = input_file1
 
     # Initialize an empty list to store all lines of data
