@@ -25,6 +25,13 @@ def hapmap_to_plink(input_file1, output_file1, output_file2):
     # Create a DataFrame from the list of lists (hmp_data)
     hmp_df = pd.DataFrame(hmp_data, columns=hmp_columns)
     
+    verify_col = ["rs", "alleles", "chrom", "pos", "strand", "assembly", "center", "protLSID", "assayLSID", "panel", "QCcode"]
+    
+    if verify_col == hmp_columns[:11]:
+        pass
+    else:
+        return "Invalid hmp.txt file. Check if the file is formatted correctly."
+    
     # Create the map_df DataFrame
     map_df = pd.DataFrame({
         'CHROM': hmp_df['chrom'],

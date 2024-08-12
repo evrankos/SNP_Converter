@@ -9,11 +9,19 @@ def plink_to_vcf(input_file1, input_file2, output_file1):
     # Read the .plk.map file into a dataframe
     map_df = pd.read_csv(map_file, sep='\t', header=None, names=['CHROM', 'ID', 'CM', 'POS'])
     
+    if len(map_df.columns) != 4:
+        return "Invalid map file. Check if the file is formatted correctly."
+    
     # Define the path to .plk.ped file
     ped_file = input_file1
     
     # Read the .plk.ped file into a dataframe
     ped_df = pd.read_csv(ped_file, sep='\t', header=None)
+    
+    if (len(ped_df.columns) - 6) % 2 == 0:
+        pass
+    else:
+        return "Invalid plk.ped file. Check if the file is formatted correctly."
     
     df = ped_df.copy()
     

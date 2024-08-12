@@ -24,6 +24,13 @@ def hapmap_to_vcf(input_file1, output_file1):
     # Create a DataFrame from the list of lists (hmp_data)
     hmp_df = pd.DataFrame(hmp_data, columns=hmp_columns)
     
+    verify_col = ["rs", "alleles", "chrom", "pos", "strand", "assembly", "center", "protLSID", "assayLSID", "panel", "QCcode"]
+    
+    if verify_col == hmp_columns[:11]:
+        pass
+    else:
+        return "Invalid hmp.txt file. Check if the file is formatted correctly."
+    
     vcf_columns = ["CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT"]
 
     for i in range(11, len(hmp_columns)):

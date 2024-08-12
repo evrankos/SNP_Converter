@@ -24,6 +24,13 @@ def vcf_to_plink(input_file1, output_file1, output_file2):
     # Create a DataFrame from the vcf_data with proper column names
     vcf_df = pd.DataFrame(vcf_data, columns=vcf_columns)
     
+    verify_col = ["CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT"]
+    
+    if verify_col == vcf_columns[:9]:
+        pass
+    else:
+        return "Invalid vcf file. Check if the file is formatted correctly."
+    
     # Create the map_df DataFrame
     map_df = pd.DataFrame({
         'CHROM': vcf_df['CHROM'],
@@ -40,21 +47,38 @@ def vcf_to_plink(input_file1, output_file1, output_file2):
     
     df = vcf_df
     
+    format = vcf_df.iloc[0, 8]
+
+    if 'GT' in format:
+        if ':' in format:
+            gt_index = 0
+        else:
+            pass
+    else:
+        return "GenoType data not found."
+    
+    columns_to_modify = vcf_df.columns[2:]
+
+    if gt_index == 0:
+        # Apply the transformation
+        for col in columns_to_modify:
+            vcf_df[col] = vcf_df[col].apply(lambda x: x.split(':')[0] if len(x.split(':')) > 0 else x)
+    
     def replace_value(row, sample_col):
         ref = row['REF']
         alt = row['ALT']
         value = row[sample_col]
         
-        if value == './.':
+        if value in ['./.', '.|.']:
             return '00'
         
-        if value == '0/0':
+        if value in ['0/0', '0|0']:
             return ref + ref
-        elif value == '1/1':
+        elif value in ['1/1', '1|1']:
             return alt + alt
-        elif value == '1/0':
+        elif value in ['1/0', '1|0']:
             return alt + ref
-        elif value == '0/1':
+        elif value in ['0/1', '0|1']:
             return ref + alt
             
         else:

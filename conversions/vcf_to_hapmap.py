@@ -22,14 +22,38 @@ def vcf_to_hmp(input_file1, output_file1):
 
     # Create a DataFrame from the vcf_data with proper column names
     vcf_df = pd.DataFrame(vcf_data, columns=vcf_columns)
+    
+    verify_col = ["CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT"]
+    
+    if verify_col == vcf_columns[:9]:
+        pass
+    else:
+        return "Invalid vcf file. Check if the file is formatted correctly."
 
-    hmp_columns = ["rs#", "alleles", "chrom", "pos", "strand", "assembly", "center", "protLSID", "assayLSID", "panel", "QCcode"]
+    hmp_columns = ["rs#", "alleles", "chrom", "pos", "strand", "assembly#", "center", "protLSID", "assayLSID", "panel", "QCcode"]
 
     for i in range(9, len(vcf_columns)):
         if vcf_columns[i] not in hmp_columns:
             hmp_columns.append(vcf_columns[i])     
 
     hmp_df = pd.DataFrame(index=range(len(vcf_df)), columns=hmp_columns)
+    
+    format = vcf_df.iloc[0, 8]
+
+    if 'GT' in format:
+        if ':' in format:
+            gt_index = 0
+        else:
+            pass
+    else:
+        return "GenoType data not found."
+    
+    columns_to_modify = vcf_df.columns[2:]
+
+    if gt_index == 0:
+        # Apply the transformation
+        for col in columns_to_modify:
+            vcf_df[col] = vcf_df[col].apply(lambda x: x.split(':')[0] if len(x.split(':')) > 0 else x)
 
     # Extract the Sample ID columns from vcf_df
     vcf_sample_ids = vcf_df.iloc[:, 9:]
@@ -44,7 +68,13 @@ def vcf_to_hmp(input_file1, output_file1):
 
     def replace_values(row, alleles):
         # Precompute allele mappings
-        allele1, allele2 = alleles.split('/')
+        
+        if '/' in alleles:
+            allele1, allele2 = alleles.split('/')
+        elif '|' in alleles:
+            allele1, allele2 = alleles.split('|')
+        else:
+            return "Unrecognizable Genotype Data. Check the 'FORMAT' column in vcf file for 'GT'."
         allele1_parts = allele1.split(',')
         
         if len(allele1_parts) > 1:
@@ -54,22 +84,36 @@ def vcf_to_hmp(input_file1, output_file1):
             
             allele_map = {
             '0/0': f"{allele2}{allele2}",
+            '0|0': f"{allele2}{allele2}",
             '1/1': f"{allele1}{allele1}",
+            '1|1': f"{allele1}{allele1}",
             './.': 'NN',
+            '.|.': 'NN',
             '1/0': f"{allele2}{allele1}",
+            '1|0': f"{allele2}{allele1}",
             '0/1': f"{allele1}{allele2}",
+            '0|1': f"{allele1}{allele2}",
             '2/2': f"{allele12}{allele12}",
+            '2|2': f"{allele12}{allele12}",
             '3/3': f"{allele13}{allele13}",
+            '3|3': f"{allele13}{allele13}",
             '3/2': f"{allele12}{allele13}",
-            '2/3': f"{allele13}{allele12}"
+            '3|2': f"{allele12}{allele13}",
+            '2/3': f"{allele13}{allele12}",
+            '2|3': f"{allele13}{allele12}"
         }
         else:
             allele_map = {
             '0/0': f"{allele2}{allele2}",
+            '0|0': f"{allele2}{allele2}",
             '1/1': f"{allele1}{allele1}",
+            '1|1': f"{allele1}{allele1}",
             './.': 'NN',
+            '.|.': 'NN',
             '1/0': f"{allele2}{allele1}",
-            '0/1': f"{allele1}{allele2}"
+            '1|0': f"{allele2}{allele1}",
+            '0/1': f"{allele1}{allele2}",
+            '0|1': f"{allele1}{allele2}"
         }
         
         # Use row.map() with a default value 'NN' for any values not in allele_map
