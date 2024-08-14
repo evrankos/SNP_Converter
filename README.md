@@ -39,6 +39,32 @@ SNP_Converter/
 #### Prerequisites
 
 - **Python Version:** Ensure that Python 3.6 or later is installed on your system. You can download Python from the official website [here](https://www.python.org/downloads/).
+- **pip:** Ensure that `pip` is installed on your system.
+  **For Windows:**
+  - You can download `get-pip.py` by right-clicking [this link] (https://bootstrap.pypa.io/get-pip.py) and saving the file as `get-pip.py`.
+  - Open Command Prompt and navigate to the directory where `get-pip.py` was downloaded. You can do this using the `cd` command:
+  ```bash session
+  cd path\to\download\directory
+  ```
+  - Run the following command to install `pip`:
+  ```bash session
+  python get-pip.py
+  ```
+
+  **For macOS and Linux:**
+  - You can install `pip` using the following command:
+  ```bash session
+  curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+  ```
+  - Once the script is downloaded, run:
+  ```bash session
+  python3 get-pip.py
+  ```
+
+  **Notes:**
+  - On some systems, you might need to use `python3` and `pip3` instead of `python` and `pip`, especially if Python 3.x is the default.
+  - Ensure that your Python installation is added to your system's PATH, especially on Windows, to allow the `pip` command to work directly from the command line.
+  After installing `pip`, you can proceed with installing Python packages using `pip install package_name`.
 
 ### Step 1: Clone the Repository
 
@@ -77,9 +103,9 @@ pip install -r requirements.txt
 ```
 
 This command will install the following packages:
-- `argparse==1.1`
-- `numpy==2.0.1`
-- `pandas==2.2.2`
+- `argparse`
+- `numpy`
+- `pandas`
 
 ### Step 4: Run the Command-Line Tool
 
@@ -257,6 +283,6 @@ Contributions to improve the SNP Converter tool are welcome. Please follow the s
 6. Submit a pull request.
 
 
-
+##
 
 This documentation should help you understand how to use the SNP Converter package effectively. If you encounter any issues or have further questions, feel free to reach out!
